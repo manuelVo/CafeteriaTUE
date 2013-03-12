@@ -64,7 +64,7 @@ public class UpdateMenusService extends IntentService
 			for (int i = 0;true;i++)
 			{
 				String htmlCode = fetchMenuPage(cafeteriaId, calendar.getTime());
-				if (!parsePage(htmlCode, db) && i != 0)
+				if (!parsePage(htmlCode, db, cafeteriaId) && i != 0)
 					break;
 				calendar.add(Calendar.WEEK_OF_YEAR, 1);
 			}
@@ -156,12 +156,15 @@ public class UpdateMenusService extends IntentService
 	 *           the HTML code of the menu page
 	 * @param db
 	 *           the database to store the menu in
+	 * @param cafeteriaid
+	 *           the id of the cafeteria
 	 * @return <code>true</code> if any menus were parsed
 	 * @throws ParseException
 	 *            if parsing the date fails - most likely the site has changed
 	 */
-	public static boolean parsePage(String htmlCode, SQLiteDatabase db) throws ParseException
+	public static boolean parsePage(String htmlCode, SQLiteDatabase db, int cafeteriaid) throws ParseException
 	{
+		Integer cid = Integer.valueOf(cafeteriaid);
 		htmlCode = StringUtils.substringAfter(htmlCode, "<div class=\"\">");
 		htmlCode = StringUtils.substringBefore(htmlCode, "<table class");
 		htmlCode = htmlCode.replace("\n", " ");
@@ -200,6 +203,7 @@ public class UpdateMenusService extends IntentService
 				Double studentprice = priceStudent != null ? Double.valueOf(priceStudent.replace(',', '.')) : null;
 				menuMenu = menuMenu.replace("<br />", ", ");
 				ContentValues values = new ContentValues();
+				values.put("cafeteriaid", cid);
 				values.put("type", menuType);
 				values.put("menu", menuMenu);
 				values.put("normalprice", normalprice);
