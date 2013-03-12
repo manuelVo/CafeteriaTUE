@@ -166,14 +166,14 @@ public class UpdateMenusService extends IntentService
 		Matcher dayMatcher = dayPattern.matcher(htmlCode);
 
 		Pattern menuRowPattern = Pattern.compile("<tr.*?</tr>");
-		//		Pattern menuTypePattern = Pattern.compile("<td.*?>(.*?)</td>");
-		//		Pattern menuMenuPattern = Pattern.compile("<td.*?>\\s*(.*?)\\s*&nbsp;");
-		//		Pattern priceNormalPattern = Pattern.compile("<td:*?G.ste: (.*?) ");
-		//		Pattern pricePupilPattern = Pattern.compile("Schüler:(.*?) ");
-		//		Pattern priceStudentPattern = Pattern.compile("&nbsp;\\s*(.*?) ");
-		// The fifth group is for parsing, not for reading data
+		
+		Pattern menuTypePattern = Pattern.compile("<td.*?>(.*?)</td>");
+		Pattern menuMenuPattern = Pattern.compile("<td.*?>\\s*(.*?)\\s*&nbsp;");
 		// TODO Fix "Gäste" (its currently G.ste) and "Schüler" (currently Sch.ler) when encoding is fixed
-		Pattern menuPattern = Pattern.compile("<td.*?>(.*?)</td>.*?<td.*?>\\s*(.*?)\\s*&nbsp;.*?-->.*?<td.*?G.ste: (.*?) .*?Sch.ler:(.*?) .*?>(\\s|&nbsp;)*(.*?) ");
+		Pattern priceNormalPattern = Pattern.compile("<td:*?G.ste: (.*?) ");
+		Pattern pricePupilPattern = Pattern.compile("Sch.ler:(.*?) ");
+		Pattern priceStudentPattern = Pattern.compile("&nbsp;\\s*(.*?) ");
+		Pattern[] patterns = new Pattern[] {menuTypePattern, menuMenuPattern, priceNormalPattern, pricePupilPattern, priceStudentPattern};
 		if (!dayMatcher.find())
 			return false;
 		do
@@ -182,39 +182,56 @@ public class UpdateMenusService extends IntentService
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(day);
 			Long timestamp = Long.valueOf(calendar.getTimeInMillis());
-			//			Matcher menuMatcher = menuPattern.matcher(dayMatcher.group(2));
-			Matcher menuRowMatcher = menuRowPattern.matcher(dayMatcher.group(2));
-			// FIXME Remove next line - testing only
-			menuRowMatcher.find();
+			Matcher menuRowMatcher = menuRowPattern.matcher(dayMatcher.group(2).replaceAll("<tr.*?<th.*?</tr>", " "));
 			while (menuRowMatcher.find())
 			{
 				String menuRow = menuRowMatcher.group();
-				Matcher menuMatcher = menuPattern.matcher(menuRow);
-				if (!menuMatcher.find())
-				{
-					// FIXME Do something more intelligent
-					throw new RuntimeException("Of all the worst things that could happen, this is THE WORST POSSIBLE THING");
-				}
-				String menuType = menuMatcher.group(1);
-				String menuMenu = menuMatcher.group(2);
-				String priceNormal = menuMatcher.group(3);
-				String pricePupil = menuMatcher.group(4);
-				// Group 5 is used for parsing purposes
-				String priceStudent = menuMatcher.group(6);
-				pricePupil = pricePupil.replace(',', '.');
-				priceNormal = priceNormal.replace(',', '.');
-				priceStudent = priceStudent.replace(',', '.');
+				String[] results = matchPatterns(menuRow, patterns);
+				String menuType = results[0];
+				String menuMenu = results[1];
+				String priceNormal = results[2];
+				String pricePupil = results[3];
+				String priceStudent = results[4];
+				Double normalprice = priceNormal != null ? Double.valueOf(priceNormal.replace(',', '.')) : null;
+				Double pupilprice = pricePupil != null ? Double.valueOf(pricePupil.replace(',', '.')) : null;
+				Double studentprice = priceStudent != null ? Double.valueOf(priceStudent.replace(',', '.')) : null;
 				menuMenu = menuMenu.replace("<br />", ", ");
 				ContentValues values = new ContentValues();
 				values.put("type", menuType);
 				values.put("menu", menuMenu);
-				values.put("normalprice", Double.valueOf(priceNormal));
-				values.put("pupilprice", Double.valueOf(pricePupil));
-				values.put("studentprice", Double.valueOf(priceStudent));
+				values.put("normalprice", normalprice);
+				values.put("pupilprice", pupilprice);
+				values.put("studentprice", studentprice);
 				values.put("day", timestamp);
 				db.insert("menus", null, values);
 			}
 		} while (dayMatcher.find());
 		return true;
+	}
+
+	/**
+	 * Matches the specified patterns on a string. Each pattern has to occur
+	 * after the previous one. The found string will always be the first group
+	 * 
+	 * @param s
+	 *           the string
+	 * @param patterns
+	 *           an array of the patterns to match
+	 * @return an array of the found strings
+	 */
+	private static String[] matchPatterns(String s, Pattern[] patterns)
+	{
+		String[] result = new String[patterns.length];
+		int nextStart = 0;
+		for (int i = 0;i < patterns.length;i++)
+		{
+			Matcher matcher = patterns[i].matcher(s);
+			if (matcher.find(nextStart))
+			{
+				nextStart = matcher.end();
+				result[i] = matcher.group(1);
+			}
+		}
+		return result;
 	}
 }
