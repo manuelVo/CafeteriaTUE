@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Mensa TÜ</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="unset">[UNSET]</string>
+    <string name="downloading_cafeteria_list">Downloading cafeteria list…</string>
+	<string name="ok">OK</string>
+	<string name="error">Error</string>
+	<string name="error_page_changed">Cannot parse data. The data parser might be outdated. Try updating your app. Please contact the app developer if this problem persists.</string>
+	<string name="error_unexpected">An unexpected error occurred. Please contact the app developer.</string>
+	<string name="error_data_fetch">An error occurred while fetching data. Please check your internet connection.</string>
+    
+</resources>
