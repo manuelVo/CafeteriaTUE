@@ -1,6 +1,7 @@
 package de.manuel_voegele.cafeteria.tue;
 
 import java.io.File;
+import java.text.NumberFormat;
 import java.util.Calendar;
 
 import android.app.Activity;
@@ -37,11 +38,14 @@ public class MenuListAdapter extends BaseAdapter
 		menus = new String[cursor.getCount()];
 		prices = new String[cursor.getCount()];
 		cursor.moveToFirst();
+		NumberFormat numberFormat = NumberFormat.getInstance();
+		numberFormat.setMaximumFractionDigits(2);
+		numberFormat.setMinimumFractionDigits(2);
 		for (int i = 0;!cursor.isAfterLast();i++)
 		{
 			types[i] = cursor.getString(0);
 			menus[i] = cursor.getString(1);
-			prices[i] = cursor.getDouble(2) + " / " + cursor.getDouble(3) + " / " + cursor.getDouble(4);
+			prices[i] = numberFormat.format(cursor.getDouble(2)) + " € / " + numberFormat.format(cursor.getDouble(3)) + " € / " + numberFormat.format(cursor.getDouble(4)) + " €";
 			cursor.move(1);
 		}
 		cursor.close();
