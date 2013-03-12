@@ -1,7 +1,6 @@
 package de.manuel_voegele.cafeteria.tue;
 
 import java.io.File;
-import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -15,9 +14,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements OnCancelListener
@@ -135,21 +134,15 @@ public class MainActivity extends Activity implements OnCancelListener
 				findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
 			}
 			cursor.close();
-			ListView menuList = (ListView) findViewById(R.id.menu_list);
-			Calendar calendar = Calendar.getInstance();
-			calendar.add(Calendar.WEEK_OF_YEAR, 1);
-			calendar.set(Calendar.DAY_OF_WEEK, 1);
-			menuList.setAdapter(new MenuListAdapter(MainActivity.this, id, calendar));
+			ViewPager pager = (ViewPager) findViewById(R.id.pager);
+			pager.setAdapter(new DayAdapter(MainActivity.this, id));
 		}
 
 		public void onRefreshMenuScreen()
 		{
 			findViewById(R.id.progressBar).setVisibility(View.GONE);
-			ListView menuList = (ListView) findViewById(R.id.menu_list);
-			Calendar calendar = Calendar.getInstance();
-			calendar.add(Calendar.WEEK_OF_YEAR, 1);
-			calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-			menuList.setAdapter(new MenuListAdapter(MainActivity.this, cafeteriaId, calendar));
+			ViewPager pager = (ViewPager) findViewById(R.id.pager);
+			pager.setAdapter(new DayAdapter(MainActivity.this, cafeteriaId));
 		}
 
 		public void onShowErrorMessage(Intent intent)
