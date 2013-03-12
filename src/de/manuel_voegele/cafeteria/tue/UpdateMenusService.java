@@ -173,7 +173,7 @@ public class UpdateMenusService extends IntentService
 		Pattern menuTypePattern = Pattern.compile("<td.*?>(.*?)</td>");
 		Pattern menuMenuPattern = Pattern.compile("<td.*?>\\s*(.*?)\\s*&nbsp;");
 		// TODO Fix "Gäste" (its currently G.ste) and "Schüler" (currently Sch.ler) when encoding is fixed
-		Pattern priceNormalPattern = Pattern.compile("<td:*?G.ste: (.*?) ");
+		Pattern priceNormalPattern = Pattern.compile("<td.*?G.ste: (.*?) ");
 		Pattern pricePupilPattern = Pattern.compile("Sch.ler:(.*?) ");
 		Pattern priceStudentPattern = Pattern.compile("&nbsp;\\s*(.*?) ");
 		Pattern[] patterns = new Pattern[] {menuTypePattern, menuMenuPattern, priceNormalPattern, pricePupilPattern, priceStudentPattern};
