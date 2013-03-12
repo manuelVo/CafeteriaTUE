@@ -208,6 +208,7 @@ public class UpdateMenusService extends IntentService
 				values.put("day", timestamp);
 				db.insert("menus", null, values);
 			}
+			// TODO Remove old menus for that day
 		} while (dayMatcher.find());
 		return true;
 	}
