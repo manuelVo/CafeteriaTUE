@@ -103,6 +103,9 @@ public class UpdateMenusService extends IntentService
 		{
 			db.close();
 		}
+		intent = new Intent();
+		intent.setAction(MainActivity.REFRESH_MENU_SCREEN_ACTION);
+		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 	}
 
 	/**
