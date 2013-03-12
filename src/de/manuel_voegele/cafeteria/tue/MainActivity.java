@@ -15,7 +15,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
-import android.view.Window;
+import android.view.View;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements OnCancelListener
@@ -36,11 +36,11 @@ public class MainActivity extends Activity implements OnCancelListener
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		getWindow().requestFeature(Window.FEATURE_PROGRESS);
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(SHOW_CAFETERIA_LIST_ACTION);
 		intentFilter.addAction(SHOW_ERROR_MESSAGE_ACTION);
 		intentFilter.addAction(SWITCH_CAFETERIA_ACTION);
+		intentFilter.addAction(REFRESH_MENU_SCREEN_ACTION);
 		LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
 		File file = new File(getFilesDir(), "database.db");
 		// TODO Remove next line
@@ -127,7 +127,7 @@ public class MainActivity extends Activity implements OnCancelListener
 				intent = new Intent(MainActivity.this, UpdateMenusService.class);
 				intent.putExtra("cafeteriaid", id);
 				startService(intent);
-				getWindow().setFeatureInt(Window.FEATURE_PROGRESS, Window.PROGRESS_VISIBILITY_ON);
+				findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
 			}
 			cursor.close();
 			// TODO Complete this function
@@ -135,7 +135,8 @@ public class MainActivity extends Activity implements OnCancelListener
 
 		public void onRefreshMenuScreen()
 		{
-			getWindow().setFeatureInt(Window.FEATURE_PROGRESS, Window.PROGRESS_VISIBILITY_OFF);
+			findViewById(R.id.progressBar).setVisibility(View.GONE);
+			// TODO Complete this function
 		}
 
 		public void onShowErrorMessage(Intent intent)
@@ -145,7 +146,7 @@ public class MainActivity extends Activity implements OnCancelListener
 				dialog.dismiss();
 				dialog = null;
 			}
-			getWindow().setFeatureInt(Window.FEATURE_PROGRESS, Window.PROGRESS_VISIBILITY_OFF);
+			findViewById(R.id.progressBar).setVisibility(View.GONE);
 			int errorMessage = intent.getIntExtra("message", R.string.unset);
 			TextView text = new TextView(MainActivity.this);
 			text.setText(errorMessage);
