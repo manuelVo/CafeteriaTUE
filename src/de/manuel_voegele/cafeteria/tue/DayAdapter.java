@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.view.PagerAdapter;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -58,6 +59,14 @@ public class DayAdapter extends PagerAdapter
 		View view = views.get(object);
 		views.remove(object);
 		container.removeView(view);
+	}
+
+	@Override
+	public CharSequence getPageTitle(int position)
+	{
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(days[position]);
+		return DateFormat.getDateFormat(activity).format(calendar.getTime());
 	}
 
 	@Override
