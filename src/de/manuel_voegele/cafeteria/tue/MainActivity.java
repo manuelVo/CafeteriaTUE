@@ -1,6 +1,7 @@
 package de.manuel_voegele.cafeteria.tue;
 
 import java.io.File;
+import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements OnCancelListener
@@ -31,6 +33,8 @@ public class MainActivity extends Activity implements OnCancelListener
 	AlertDialog dialog;
 
 	SQLiteDatabase db;
+
+	int cafeteriaId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -121,6 +125,7 @@ public class MainActivity extends Activity implements OnCancelListener
 		public void onSwitchCafeteria(Intent intent)
 		{
 			int id = intent.getIntExtra("id", -1);
+			cafeteriaId = id;
 			Cursor cursor = db.rawQuery("SELECT * FROM menus WHERE cafeteriaid = ? LIMIT 0,1;", new String[] { String.valueOf(id) });
 			if (cursor.getCount() == 0)
 			{
@@ -130,13 +135,21 @@ public class MainActivity extends Activity implements OnCancelListener
 				findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
 			}
 			cursor.close();
-			// TODO Complete this function
+			ListView menuList = (ListView) findViewById(R.id.menu_list);
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.WEEK_OF_YEAR, 1);
+			calendar.set(Calendar.DAY_OF_WEEK, 1);
+			menuList.setAdapter(new MenuListAdapter(MainActivity.this, id, calendar));
 		}
 
 		public void onRefreshMenuScreen()
 		{
 			findViewById(R.id.progressBar).setVisibility(View.GONE);
-			// TODO Complete this function
+			ListView menuList = (ListView) findViewById(R.id.menu_list);
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.WEEK_OF_YEAR, 1);
+			calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+			menuList.setAdapter(new MenuListAdapter(MainActivity.this, cafeteriaId, calendar));
 		}
 
 		public void onShowErrorMessage(Intent intent)
