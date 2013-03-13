@@ -41,7 +41,10 @@ public class MainActivity extends Activity
 	 */
 	public static final String SWITCH_CAFETERIA_ACTION = "SwitchCafeteriaAction";
 
-	/** Refreshes the menu screen */
+	/**
+	 * Refreshes the menu screen. If the extra hideProgress is set to
+	 * <code>false</code> the progress bar will not be hidden.
+	 */
 	public static final String REFRESH_MENU_SCREEN_ACTION = "RefreshMenuScreenAction";
 
 	/** The key of the preference for the cafeteria id */
@@ -159,10 +162,14 @@ public class MainActivity extends Activity
 
 	/**
 	 * Refreshes the menu screen
+	 * 
+	 * @param intent
+	 *           the intent used for this call
 	 */
-	public void onRefreshMenuScreen()
+	public void onRefreshMenuScreen(Intent intent)
 	{
-		findViewById(R.id.progressBar).setVisibility(View.GONE);
+		if (intent.getBooleanExtra("hideProgress", true))
+			findViewById(R.id.progressBar).setVisibility(View.GONE);
 		ViewPager pager = (ViewPager) findViewById(R.id.pager);
 		pager.setAdapter(new DayAdapter(this, getPreferences(MODE_PRIVATE).getInt(SETTING_CAFETERIA_ID, -1)));
 	}
@@ -192,7 +199,7 @@ public class MainActivity extends Activity
 		{
 			String action = intent.getAction();
 			if (action.equals(REFRESH_MENU_SCREEN_ACTION))
-				onRefreshMenuScreen();
+				onRefreshMenuScreen(intent);
 			else if (action.equals(SHOW_ERROR_MESSAGE_ACTION))
 				onShowErrorMessage(intent);
 			else if (action.equals(SWITCH_CAFETERIA_ACTION))

@@ -162,7 +162,7 @@ public class UpdateMenusService extends IntentService
 	 * @throws ParseException
 	 *            if parsing the date fails - most likely the site has changed
 	 */
-	public static boolean parsePage(String htmlCode, SQLiteDatabase db, int cafeteriaid) throws ParseException
+	public boolean parsePage(String htmlCode, SQLiteDatabase db, int cafeteriaid) throws ParseException
 	{
 		Integer cid = Integer.valueOf(cafeteriaid);
 		htmlCode = StringUtils.substringAfter(htmlCode, "<div class=\"\">");
@@ -182,10 +182,16 @@ public class UpdateMenusService extends IntentService
 		Pattern[] patterns = new Pattern[] {menuTypePattern, menuMenuPattern, priceNormalPattern, pricePupilPattern, priceStudentPattern};
 		if (!dayMatcher.find())
 			return false;
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		long today = calendar.getTimeInMillis();
 		do
 		{
 			Date day = dateFormat.parse(dayMatcher.group(1));
-			Calendar calendar = Calendar.getInstance();
+			calendar = Calendar.getInstance();
 			calendar.setTime(day);
 			Long timestamp = Long.valueOf(calendar.getTimeInMillis());
 			db.delete("menus", "cafeteriaid = ? AND day = ?", new String[] { String.valueOf(cafeteriaid), timestamp.toString() });
@@ -212,6 +218,13 @@ public class UpdateMenusService extends IntentService
 				values.put("studentprice", studentprice);
 				values.put("day", timestamp);
 				db.insert("menus", null, values);
+			}
+			if (timestamp.longValue() == today)
+			{
+				Intent intent = new Intent();
+				intent.setAction(MainActivity.REFRESH_MENU_SCREEN_ACTION);
+				intent.putExtra("hideProgress", false);
+				LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 			}
 		} while (dayMatcher.find());
 		return true;
