@@ -29,11 +29,11 @@ public class MainActivity extends Activity implements OnCancelListener
 
 	public static final String REFRESH_MENU_SCREEN_ACTION = "RefreshMenuScreenAction";
 
-	AlertDialog dialog;
+	private AlertDialog dialog;
 
-	SQLiteDatabase db;
+	private SQLiteDatabase db;
 
-	int cafeteriaId;
+	private int cafeteriaId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -60,12 +60,6 @@ public class MainActivity extends Activity implements OnCancelListener
 			Intent intent = new Intent();
 			intent.setAction(SHOW_CAFETERIA_LIST_ACTION);
 			LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-			
-//			startService(new Intent(this, UpdateCafeteriaListService.class));
-//			FrameLayout popupLoadingView = ViewFactory.createView(R.layout.popup_loading, this);
-//			TextView text = (TextView) popupLoadingView.findViewById(R.id.text);
-//			text.setText(R.string.downloading_cafeteria_list);
-//			dialog = new AlertDialog.Builder(this).setView(popupLoadingView).setOnCancelListener(this).show();
 		}
 		else
 		{
@@ -98,6 +92,51 @@ public class MainActivity extends Activity implements OnCancelListener
 		finish();
 	}
 
+	public void onShowCafeteriaListAction()
+	{
+		//		dialog.dismiss();
+		//		dialog = null;
+		new CafeteriaSelection(this, db).show();
+	}
+
+	public void onSwitchCafeteria(Intent intent)
+	{
+		int id = intent.getIntExtra("id", -1);
+		cafeteriaId = id;
+		Cursor cursor = db.rawQuery("SELECT * FROM menus WHERE cafeteriaid = ? LIMIT 0,1;", new String[] { String.valueOf(id) });
+		if (cursor.getCount() == 0)
+		{
+			intent = new Intent(this, UpdateMenusService.class);
+			intent.putExtra("cafeteriaid", id);
+			startService(intent);
+			findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+		}
+		cursor.close();
+		ViewPager pager = (ViewPager) findViewById(R.id.pager);
+		pager.setAdapter(new DayAdapter(this, id));
+	}
+
+	public void onRefreshMenuScreen()
+	{
+		findViewById(R.id.progressBar).setVisibility(View.GONE);
+		ViewPager pager = (ViewPager) findViewById(R.id.pager);
+		pager.setAdapter(new DayAdapter(this, cafeteriaId));
+	}
+
+	public void onShowErrorMessage(Intent intent)
+	{
+		if (dialog != null)
+		{
+			dialog.dismiss();
+			dialog = null;
+		}
+		findViewById(R.id.progressBar).setVisibility(View.GONE);
+		int errorMessage = intent.getIntExtra("message", R.string.unset);
+		TextView text = new TextView(this);
+		text.setText(errorMessage);
+		new AlertDialog.Builder(this).setTitle(R.string.error).setView(text).setNeutralButton(R.string.ok, null).show();
+	}
+
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver()
 	{
 		@Override
@@ -112,51 +151,6 @@ public class MainActivity extends Activity implements OnCancelListener
 				onSwitchCafeteria(intent);
 			else if (action.equals(SHOW_CAFETERIA_LIST_ACTION))
 				onShowCafeteriaListAction();
-		}
-
-		public void onShowCafeteriaListAction()
-		{
-//			dialog.dismiss();
-//			dialog = null;
-			new CafeteriaSelection(MainActivity.this, db).show();
-		}
-
-		public void onSwitchCafeteria(Intent intent)
-		{
-			int id = intent.getIntExtra("id", -1);
-			cafeteriaId = id;
-			Cursor cursor = db.rawQuery("SELECT * FROM menus WHERE cafeteriaid = ? LIMIT 0,1;", new String[] { String.valueOf(id) });
-			if (cursor.getCount() == 0)
-			{
-				intent = new Intent(MainActivity.this, UpdateMenusService.class);
-				intent.putExtra("cafeteriaid", id);
-				startService(intent);
-				findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-			}
-			cursor.close();
-			ViewPager pager = (ViewPager) findViewById(R.id.pager);
-			pager.setAdapter(new DayAdapter(MainActivity.this, id));
-		}
-
-		public void onRefreshMenuScreen()
-		{
-			findViewById(R.id.progressBar).setVisibility(View.GONE);
-			ViewPager pager = (ViewPager) findViewById(R.id.pager);
-			pager.setAdapter(new DayAdapter(MainActivity.this, cafeteriaId));
-		}
-
-		public void onShowErrorMessage(Intent intent)
-		{
-			if (dialog != null)
-			{
-				dialog.dismiss();
-				dialog = null;
-			}
-			findViewById(R.id.progressBar).setVisibility(View.GONE);
-			int errorMessage = intent.getIntExtra("message", R.string.unset);
-			TextView text = new TextView(MainActivity.this);
-			text.setText(errorMessage);
-			new AlertDialog.Builder(MainActivity.this).setTitle(R.string.error).setView(text).setNeutralButton(R.string.ok, null).show();
 		}
 	};
 }
