@@ -86,4 +86,13 @@ public class DayAdapter extends PagerAdapter
 		return true;
 	}
 
+	public int getPageNumberForDay(long day)
+	{
+		for (int i = 0;i < days.length;i++)
+		{
+			if (days[i] == day)
+				return i;
+		}
+		return -1;
+	}
 }

@@ -150,7 +150,9 @@ public class MainActivity extends Activity
 		else
 		{
 			ViewPager pager = (ViewPager) findViewById(R.id.pager);
-			pager.setAdapter(new DayAdapter(this, cafeteriaId));
+			DayAdapter adapter = new DayAdapter(this, cafeteriaId);
+			pager.setAdapter(adapter);
+			pager.setCurrentItem(adapter.getPageNumberForDay(calendar.getTimeInMillis()));
 		}
 		cursor.close();
 	}
