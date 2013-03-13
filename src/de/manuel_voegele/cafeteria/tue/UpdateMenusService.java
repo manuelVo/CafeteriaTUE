@@ -188,6 +188,7 @@ public class UpdateMenusService extends IntentService
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(day);
 			Long timestamp = Long.valueOf(calendar.getTimeInMillis());
+			db.delete("menus", "cafeteriaid = ? AND day = ?", new String[] { String.valueOf(cafeteriaid), timestamp.toString() });
 			Matcher menuRowMatcher = menuRowPattern.matcher(dayMatcher.group(2).replaceAll("<tr.*?<th.*?</tr>", " "));
 			while (menuRowMatcher.find())
 			{
@@ -212,7 +213,6 @@ public class UpdateMenusService extends IntentService
 				values.put("day", timestamp);
 				db.insert("menus", null, values);
 			}
-			db.delete("menus", "cafeteriaid = ? AND day = ?", new String[] { String.valueOf(cafeteriaid), timestamp.toString() });
 		} while (dayMatcher.find());
 		return true;
 	}
