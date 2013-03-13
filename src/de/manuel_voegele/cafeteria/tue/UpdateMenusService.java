@@ -212,7 +212,7 @@ public class UpdateMenusService extends IntentService
 				values.put("day", timestamp);
 				db.insert("menus", null, values);
 			}
-			// TODO Remove old menus for that day
+			db.delete("menus", "cafeteriaid = ? AND day = ?", new String[] { String.valueOf(cafeteriaid), timestamp.toString() });
 		} while (dayMatcher.find());
 		return true;
 	}
