@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Mensa TÜ</string>
+    <string name="menu_settings">Einstellungen</string>
+    <string name="downloading_cafeteria_list">Lade Mensaliste herunter…</string>
+	<string name="ok">OK</string>
+	<string name="error">Fehler</string>
+	<string name="error_page_changed">Fehler beim Lesen der Daten. Deine App könnte veraltet sein. Versuche sie zu updaten. Sollte der Fehler weiterhin bestehen informiere bitte den Entwickler der App.</string>
+	<string name="error_unexpected">Ein unerwarteter Fehler ist aufgetreten. Bitte kontaktiere den Entwickler der App.</string>
+	<string name="error_data_fetch">Beim empfangen der Daten ist ein Fehler aufgetreten. Bitte überprüfe deine Internetverbindung.</string>
+    
+</resources>
