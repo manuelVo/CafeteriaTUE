@@ -3,6 +3,7 @@ package de.manuel_voegele.cafeteria.tue;
 import java.io.File;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import android.app.Activity;
@@ -66,7 +67,7 @@ public class DayAdapter extends PagerAdapter
 	{
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(days[position]);
-		return DateFormat.getDateFormat(activity).format(calendar.getTime());
+		return calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()) + " " + DateFormat.getDateFormat(activity).format(calendar.getTime());
 	}
 
 	@Override
