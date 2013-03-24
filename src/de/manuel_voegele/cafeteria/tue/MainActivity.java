@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -101,6 +102,19 @@ public class MainActivity extends Activity
 	}
 	
 	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id.menu_switch_cafeteria:
+				onShowCafeteriaListAction();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
 	protected void onStop()
 	{
 		super.onStop();
@@ -150,13 +164,10 @@ public class MainActivity extends Activity
 			startService(intent);
 			findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
 		}
-		else
-		{
-			ViewPager pager = (ViewPager) findViewById(R.id.pager);
-			DayAdapter adapter = new DayAdapter(this, cafeteriaId);
-			pager.setAdapter(adapter);
-			pager.setCurrentItem(adapter.getPageNumberForDay(calendar.getTimeInMillis()));
-		}
+		ViewPager pager = (ViewPager) findViewById(R.id.pager);
+		DayAdapter adapter = new DayAdapter(this, cafeteriaId);
+		pager.setAdapter(adapter);
+		pager.setCurrentItem(adapter.getPageNumberForDay(calendar.getTimeInMillis()));
 		cursor.close();
 	}
 

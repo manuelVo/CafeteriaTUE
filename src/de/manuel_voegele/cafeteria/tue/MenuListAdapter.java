@@ -33,7 +33,7 @@ public class MenuListAdapter extends BaseAdapter
 		this.activity = activity;
 		this.cafeteriaId = cafeteriaId;
 		SQLiteDatabase db = SQLiteDatabase.openDatabase(new File(activity.getFilesDir(), "database.db").getPath(), null, SQLiteDatabase.OPEN_READONLY);
-		Cursor cursor = db.rawQuery("SELECT type, menu, studentprice, normalprice, pupilprice FROM menus WHERE day = ?;", new String[] { String.valueOf(day.getTimeInMillis()) });
+		Cursor cursor = db.rawQuery("SELECT type, menu, studentprice, normalprice, pupilprice FROM menus WHERE cafeteriaid = ? AND day = ?;", new String[] { String.valueOf(cafeteriaId), String.valueOf(day.getTimeInMillis()) });
 		types = new String[cursor.getCount()];
 		menus = new String[cursor.getCount()];
 		prices = new String[cursor.getCount()];
