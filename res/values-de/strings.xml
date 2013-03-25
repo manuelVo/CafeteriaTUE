@@ -3,6 +3,7 @@
 
     <string name="app_name">Mensa TÜ</string>
     <string name="menu_switch_cafeteria">Mensa wechseln</string>
+    <string name="menu_refresh">Aktualisieren</string>
     <string name="downloading_cafeteria_list">Lade Mensaliste herunter…</string>
 	<string name="ok">OK</string>
 	<string name="error">Fehler</string>

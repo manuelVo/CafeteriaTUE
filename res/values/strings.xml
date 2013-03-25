@@ -4,6 +4,7 @@
 
     <string name="app_name">Cafeteria TÜ</string>
     <string name="menu_switch_cafeteria">Switch cafeteria</string>
+    <string name="menu_refresh">Refresh</string>
     <string name="downloading_cafeteria_list">Downloading cafeteria list…</string>
 	<string name="ok">OK</string>
 	<string name="error">Error</string>

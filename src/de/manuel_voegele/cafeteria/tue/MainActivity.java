@@ -109,6 +109,9 @@ public class MainActivity extends Activity
 			case R.id.menu_switch_cafeteria:
 				onShowCafeteriaListAction();
 				return true;
+			case R.id.menu_refresh:
+				refreshMenus(getPreferences(MODE_PRIVATE).getInt(SETTING_CAFETERIA_ID, -1));
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -159,16 +162,27 @@ public class MainActivity extends Activity
 		Cursor cursor = db.rawQuery("SELECT * FROM menus WHERE cafeteriaid = ? AND day = ? LIMIT 0,1;", new String[] { String.valueOf(cafeteriaId), String.valueOf(calendar.getTimeInMillis()) });
 		if (cursor.getCount() == 0)
 		{
-			Intent intent = new Intent(this, UpdateMenusService.class);
-			intent.putExtra("cafeteriaid", cafeteriaId);
-			startService(intent);
-			findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+			refreshMenus(cafeteriaId);
 		}
 		ViewPager pager = (ViewPager) findViewById(R.id.pager);
 		DayAdapter adapter = new DayAdapter(this, cafeteriaId);
 		pager.setAdapter(adapter);
 		pager.setCurrentItem(adapter.getPageNumberForDay(calendar.getTimeInMillis()));
 		cursor.close();
+	}
+
+	/**
+	 * Refreshes the menus
+	 * 
+	 * @param cafeteriaId
+	 *           the id of the cafeteria to refresh the menus for
+	 */
+	public void refreshMenus(int cafeteriaId)
+	{
+		Intent intent = new Intent(this, UpdateMenusService.class);
+		intent.putExtra("cafeteriaid", cafeteriaId);
+		startService(intent);
+		findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
 	}
 
 	/**
