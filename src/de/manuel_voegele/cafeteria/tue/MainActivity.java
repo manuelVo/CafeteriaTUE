@@ -73,8 +73,15 @@ public class MainActivity extends Activity
 			db.execSQL("CREATE TABLE cafeterias (id INT PRIMARY KEY, name TEXT);");
 			db.execSQL("CREATE TABLE menus (cafeteriaid INT, type TEXT, menu TEXT, studentprice REAL, normalprice REAL, pupilprice REAL, day INT);");
 			
+			db.execSQL("INSERT INTO cafeterias (id, name) VALUES (611, 'Mensa Wilhelmstraße');");
 			db.execSQL("INSERT INTO cafeterias (id, name) VALUES (621, 'Mensa Morgenstelle');");
+			db.execSQL("INSERT INTO cafeterias (id, name) VALUES (623, 'Mensa Prinz Karl');");
 			db.execSQL("INSERT INTO cafeterias (id, name) VALUES (631, 'Mensa Reutlingen');");
+			db.execSQL("INSERT INTO cafeterias (id, name) VALUES (640, 'Mensa Sigmaringen');");
+			db.execSQL("INSERT INTO cafeterias (id, name) VALUES (645, 'Mensa Albstadt-Ebingen');");
+			db.execSQL("INSERT INTO cafeterias (id, name) VALUES (655, 'Mensa Rottenburg');");
+			db.execSQL("INSERT INTO cafeterias (id, name) VALUES (661, 'Mensa Hohenheim');");
+			db.execSQL("INSERT INTO cafeterias (id, name) VALUES (665, 'Mensa Nürtigen');");
 		}
 		else
 		{
