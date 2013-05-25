@@ -8,6 +8,7 @@
         android:minSdkVersion="11"
         android:targetSdkVersion="17" />
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:allowBackup="true"
@@ -25,6 +26,11 @@
         </activity>
         <service android:name="de.manuel_voegele.cafeteria.tue.UpdateCafeteriaListService"></service>
         <service android:name="de.manuel_voegele.cafeteria.tue.UpdateMenusService"></service>
+        <receiver android:name="de.manuel_voegele.cafeteria.tue.Autoupdater">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -80,7 +80,7 @@ public class MainActivity extends Activity
 		{
 			db = SQLiteDatabase.openDatabase(new File(getFilesDir(), "database.db").getPath(), null, SQLiteDatabase.OPEN_READWRITE);
 		}
-		int cafeteriaId = getPreferences(MODE_PRIVATE).getInt(SETTING_CAFETERIA_ID, -1);
+		int cafeteriaId = getSharedPreferences("pref",MODE_PRIVATE).getInt(SETTING_CAFETERIA_ID, -1);
 		if (cafeteriaId == -1)
 		{
 			Intent intent = new Intent();
@@ -110,7 +110,7 @@ public class MainActivity extends Activity
 				onShowCafeteriaListAction();
 				return true;
 			case R.id.menu_refresh:
-				refreshMenus(getPreferences(MODE_PRIVATE).getInt(SETTING_CAFETERIA_ID, -1));
+				refreshMenus(getSharedPreferences("pref",MODE_PRIVATE).getInt(SETTING_CAFETERIA_ID, -1));
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -142,7 +142,7 @@ public class MainActivity extends Activity
 	public void onSwitchCafeteria(Intent intent)
 	{
 		int id = intent.getIntExtra("id", -1);
-		getPreferences(MODE_PRIVATE).edit().putInt(SETTING_CAFETERIA_ID, id).apply();
+		getSharedPreferences("pref",MODE_PRIVATE).edit().putInt(SETTING_CAFETERIA_ID, id).apply();
 		switchCafeteria(id);
 	}
 
@@ -196,7 +196,7 @@ public class MainActivity extends Activity
 		if (intent.getBooleanExtra("hideProgress", true))
 			findViewById(R.id.progressBar).setVisibility(View.GONE);
 		ViewPager pager = (ViewPager) findViewById(R.id.pager);
-		pager.setAdapter(new DayAdapter(this, getPreferences(MODE_PRIVATE).getInt(SETTING_CAFETERIA_ID, -1)));
+		pager.setAdapter(new DayAdapter(this, getSharedPreferences("pref",MODE_PRIVATE).getInt(SETTING_CAFETERIA_ID, -1)));
 	}
 
 	/**
