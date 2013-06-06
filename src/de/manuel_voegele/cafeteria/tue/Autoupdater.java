@@ -19,7 +19,7 @@ public class Autoupdater extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		if (intent == null)
 			return;			
-		SharedPreferences sp = context.getSharedPreferences("pref", MainActivity.MODE_PRIVATE);
+		SharedPreferences sp = context.getSharedPreferences(MainActivity.GENERAL_PREFERENCES_NAME, MainActivity.MODE_PRIVATE);
 		String action = intent.getAction();
 		if(Intent.ACTION_BOOT_COMPLETED.equals(action))
 		{
