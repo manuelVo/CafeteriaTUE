@@ -12,9 +12,6 @@ import android.content.SharedPreferences;
 
 /**
  * This class is responsible for updating the menu every day at 4 am.
- * 
- * @author Manuel Vögele
- * 
  */
 public class Autoupdater extends BroadcastReceiver {
 
