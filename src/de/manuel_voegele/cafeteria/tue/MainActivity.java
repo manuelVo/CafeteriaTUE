@@ -122,6 +122,10 @@ public class MainActivity extends Activity
 			case R.id.menu_refresh:
 				refreshMenus(getSharedPreferences(GENERAL_PREFERENCES_NAME,MODE_PRIVATE).getInt(SETTING_CAFETERIA_ID, -1));
 				return true;
+			case R.id.menu_settings:
+				Intent intent = new Intent(this, SettingsActivity.class);
+				startActivity(intent);
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}

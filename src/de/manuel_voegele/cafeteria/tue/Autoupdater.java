@@ -1,6 +1,7 @@
 package de.manuel_voegele.cafeteria.tue;
 
 import java.util.Calendar;
+import java.util.concurrent.locks.ReentrantLock;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -18,6 +19,9 @@ public class Autoupdater extends BroadcastReceiver {
 	/** {@link Intent} to update the menu automatically */
 	public final static String ACTION_UPDATE = "UPDATE";
 	
+	/** A lock making the scheduling functions thread safe */
+	private static ReentrantLock lock = new ReentrantLock(true);
+
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		if (intent == null)
@@ -26,8 +30,9 @@ public class Autoupdater extends BroadcastReceiver {
 		String action = intent.getAction();
 		if(Intent.ACTION_BOOT_COMPLETED.equals(action))
 		{
-			nextUpdate(context);
-		}else if(ACTION_UPDATE.equals(action))
+			scheduleUpdate(context);
+		}
+		else if(ACTION_UPDATE.equals(action))
 		{
 			refreshMenus(context, sp.getInt(MainActivity.SETTING_CAFETERIA_ID, -1));
 		}
@@ -49,18 +54,34 @@ public class Autoupdater extends BroadcastReceiver {
 	}
 	
 	/**
-	 * Set an alarm for the next update. This function is thread save
-	 * (synchronized)
+	 * Returns the intent used for updating
+	 * 
+	 * @param context
+	 *           the context
+	 * @return the intent
+	 */
+	private static PendingIntent getUpdateIntent(Context context)
+	{
+		Intent intent = new Intent();
+		intent.setComponent(new ComponentName("de.manuel_voegele.cafeteria.tue", Autoupdater.class.getName()));
+		intent.setAction(ACTION_UPDATE);
+		return PendingIntent.getBroadcast(context, 0, intent, 0);
+	}
+
+	/**
+	 * Set an alarm for the next update. This function is thread safe.
 	 * 
 	 * @param context
 	 *           the context
 	 */
-	public static synchronized void nextUpdate(Context context)
+	public static void scheduleUpdate(Context context)
 	{
-		// The Intent, witch send the signal for the update
-		Intent i_alarm = new Intent();
+		lock.lock();
+
+		// Create the intent
+		PendingIntent pi = getUpdateIntent(context);
 		
-		//Set the time for the next update
+		// Set the time for the next update
 		Calendar updateTime = Calendar.getInstance();
 		updateTime.add(Calendar.HOUR_OF_DAY, 20); //Update at 4 am. If the current time is before 4 o'clock the alarm will set today, else it will be called tomorrow
 		updateTime.set(Calendar.HOUR_OF_DAY, 4);
@@ -68,16 +89,23 @@ public class Autoupdater extends BroadcastReceiver {
 		updateTime.set(Calendar.SECOND, 0);
 		updateTime.set(Calendar.MILLISECOND, 0);
 		
-		//Create the update period intent
-		i_alarm.setComponent(new ComponentName("de.manuel_voegele.cafeteria.tue", Autoupdater.class.getName()));
-		i_alarm.setAction(ACTION_UPDATE);
+		// Set the AlarmManager to call the Intent at the specified time
+		((AlarmManager) context.getSystemService(Context.ALARM_SERVICE)).cancel(pi); //remove old Intent (needed to set a new)
+		((AlarmManager) context.getSystemService(Context.ALARM_SERVICE)).set(AlarmManager.RTC_WAKEUP, updateTime.getTimeInMillis(), pi);
 
-		//Set the AlarmManager to call the Intent at the specified time
-		PendingIntent pi = PendingIntent.getBroadcast(context, 0, i_alarm, 0);
-		((AlarmManager) context.getSystemService(Context.ALARM_SERVICE))
-				.cancel(pi); //remove old Intent (needed to set a new)
-		((AlarmManager) context.getSystemService(Context.ALARM_SERVICE)).set(
-				AlarmManager.RTC_WAKEUP, updateTime.getTimeInMillis(), pi);
+		lock.unlock();
 	}
 
+	/**
+	 * Cancel the alarm for the next update. This function is thread safe.
+	 * 
+	 * @param context
+	 *           the context
+	 */
+	public static void cancelScheduledUpdate(Context context)
+	{
+		lock.lock();
+		((AlarmManager) context.getSystemService(Context.ALARM_SERVICE)).cancel(getUpdateIntent(context));
+		lock.unlock();
+	}
 }

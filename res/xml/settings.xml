@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <CheckBoxPreference android:key="autoupdate" android:title="@string/setting_autoupdate" android:summary="@string/setting_autoupdate_secondary" android:defaultValue="true"/>
+    
+    
+
+</PreferenceScreen>
