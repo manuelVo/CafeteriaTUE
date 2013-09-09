@@ -26,6 +26,9 @@ import android.widget.TextView;
  */
 public class MainActivity extends Activity
 {
+	/** The name for the general preferences */
+	public static final String GENERAL_PREFERENCES_NAME = "general";
+
 	/** Shows prompts the user to select a cafeteria */
 	public static final String SHOW_CAFETERIA_LIST_ACTION = "ShowCafeteriaListAction";
 	
@@ -87,7 +90,7 @@ public class MainActivity extends Activity
 		{
 			db = SQLiteDatabase.openDatabase(new File(getFilesDir(), "database.db").getPath(), null, SQLiteDatabase.OPEN_READWRITE);
 		}
-		int cafeteriaId = getPreferences(MODE_PRIVATE).getInt(SETTING_CAFETERIA_ID, -1);
+		int cafeteriaId = getSharedPreferences(GENERAL_PREFERENCES_NAME, MODE_PRIVATE).getInt(SETTING_CAFETERIA_ID, -1);
 		if (cafeteriaId == -1)
 		{
 			Intent intent = new Intent();
@@ -117,7 +120,11 @@ public class MainActivity extends Activity
 				onShowCafeteriaListAction();
 				return true;
 			case R.id.menu_refresh:
-				refreshMenus(getPreferences(MODE_PRIVATE).getInt(SETTING_CAFETERIA_ID, -1));
+				refreshMenus(getSharedPreferences(GENERAL_PREFERENCES_NAME,MODE_PRIVATE).getInt(SETTING_CAFETERIA_ID, -1));
+				return true;
+			case R.id.menu_settings:
+				Intent intent = new Intent(this, SettingsActivity.class);
+				startActivity(intent);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -149,7 +156,7 @@ public class MainActivity extends Activity
 	public void onSwitchCafeteria(Intent intent)
 	{
 		int id = intent.getIntExtra("id", -1);
-		getPreferences(MODE_PRIVATE).edit().putInt(SETTING_CAFETERIA_ID, id).apply();
+		getSharedPreferences(GENERAL_PREFERENCES_NAME,MODE_PRIVATE).edit().putInt(SETTING_CAFETERIA_ID, id).apply();
 		switchCafeteria(id);
 	}
 
@@ -203,7 +210,7 @@ public class MainActivity extends Activity
 		if (intent.getBooleanExtra("hideProgress", true))
 			findViewById(R.id.progressBar).setVisibility(View.GONE);
 		ViewPager pager = (ViewPager) findViewById(R.id.pager);
-		pager.setAdapter(new DayAdapter(this, getPreferences(MODE_PRIVATE).getInt(SETTING_CAFETERIA_ID, -1)));
+		pager.setAdapter(new DayAdapter(this, getSharedPreferences(GENERAL_PREFERENCES_NAME,MODE_PRIVATE).getInt(SETTING_CAFETERIA_ID, -1)));
 	}
 
 	/**
