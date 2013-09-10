@@ -36,6 +36,8 @@ public class Autoupdater extends BroadcastReceiver {
 		else if(ACTION_UPDATE.equals(action))
 		{
 			refreshMenus(context, sp.getInt(MainActivity.SETTING_CAFETERIA_ID, -1));
+			if (sp.getBoolean(SettingsActivity.SETTING_AUTOUPDATE, true))
+				scheduleUpdate(context);
 		}
 	}
 	
