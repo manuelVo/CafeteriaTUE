@@ -30,7 +30,8 @@ public class Autoupdater extends BroadcastReceiver {
 		String action = intent.getAction();
 		if(Intent.ACTION_BOOT_COMPLETED.equals(action))
 		{
-			scheduleUpdate(context);
+			if (sp.getBoolean(SettingsActivity.SETTING_AUTOUPDATE, true))
+				scheduleUpdate(context);
 		}
 		else if(ACTION_UPDATE.equals(action))
 		{
